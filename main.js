@@ -4,17 +4,17 @@ document.getElementById('submit').addEventListener('click', getReport);
 function getReport() {
    console.log('submit pressed');
 
-   let zip = document.getElementById('zipCode').value;
+   let city = document.getElementById('city').value;
    
-   console.log(zip);
+   console.log(city);
 
-   const apiURL = 'https://api.openweathermap.org/data/2.5/weather?zip=';
+   const apiURL = 'https://api.openweathermap.org/data/2.5/weather?q=';
    const apiKey = '&APPID=896a6875185f6799d82c2f0bda98e165';
-   const zipURL = apiURL + zip + apiKey;
+   const cityURL = apiURL + city + apiKey;
 
-   console.log(zipURL);
+   console.log(cityURL);
 
-   fetch(zipURL)
+   fetch(cityURL)
    .then(
     function (x) {
        console.log(x);
@@ -28,7 +28,7 @@ function getReport() {
     function (response) {
 
        let city = response.name;
-       document.getElementById('city').innerHTML = city;
+       document.getElementById('cityCard').innerHTML = city;
 
        let tempK = response.main.temp;
        document.getElementById('kel').innerHTML = Math.round(tempK) + " K";
@@ -40,7 +40,7 @@ function getReport() {
        document.getElementById('fahr').innerHTML = Math.round(Number((tempF - 273.15) * (9 / 5) + 32)) + " F";
 
        console.log(response);
-
+      
     })
     
 }
