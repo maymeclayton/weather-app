@@ -19,4 +19,8 @@ This is a weather app created for Apax Software as part of their interview proce
 
 **OpenWeather** - I chose this for my weather source because I had utilized it in a previous project, it's free, and fairly simple to implement.
 
+// app.get('/', function(req, res){
+//     res.render('index');
+// });
+
 
