@@ -3,12 +3,13 @@ var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+require('dotenv').config();
 
 var con = mysql.createConnection({
-  host: "weatherapp.csf0szd6dbyo.us-east-1.rds.amazonaws.com",
-  user: "admin",
-  password: "apaxweather",
-  database: 'user'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_DATABASE
 });
 
 // con.connect(function(err) {
@@ -105,4 +106,4 @@ app.post('/register', function(req, res){
 })
 
 
-app.listen(3000);
+app.listen(process.env.PORT);
