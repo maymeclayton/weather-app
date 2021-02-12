@@ -70,7 +70,7 @@ app.post('/', function(req, res){
             })
           } else {
             var location = body.name;
-            var temp = body.main.temp;
+            var temp = Math.round(Number((body.main.temp - 273.15) * (9 / 5) + 32)) + " F";
             var desc = body.weather[0].description;
   
             res.render('index', {
@@ -144,10 +144,50 @@ app.post('/register', function(req, res){
 })
 
 app.get('/dashboard', function(req, res){
-console.log("you've hit dashboard");
+    const request = require('request');
+
+    var location =[
+        "Lexington",
+        "Paris",
+        "San Francisco",
+        "Patchogue"
+     ];
+      
+
+    var key = process.env.API_KEY;
+    var baseUrl = "https://api.openweathermap.org/data/2.5/weather?q=";
+    var apiUrl = baseUrl + location + key;
 
     if (req.session.loggedin){
         res.render("dashboard");
+
+        // iterate through cities and display their weather.
+        
+        request(apiUrl, { json: true }, function (error, response, body) {
+            if (body.message === 'city not found') {
+                res.render('index', {
+                  city: body.message,
+                  location: null,
+                  temp: null,
+                  desc: null,
+                })
+              } else {
+                var cities = body.name;
+                var temp = Math.round(Number((body.main.temp - 273.15) * (9 / 5) + 32)) + " F";
+                var desc = body.weather[0].description;
+      
+                res.render('index', {
+                  location, temp, desc
+                });
+              }
+    
+        console.error('error:', error); // Print the error if one occurred
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    
+    })
+        
+
+
         con.query('SELECT idusers FROM users WHERE name=${req.session.name} AND password=${req.session.password}', function(error, result, fields){
             req.session.id = result;
             console.log(req.session.id);
@@ -158,6 +198,16 @@ console.log("you've hit dashboard");
         console.log("not logged in");
         res.redirect('/login');
     }
+    
+});
+
+app.post("/dashboard", function(req, res){
+    const location = req.body.city;
+    var sql = "INSERT into locations ${location} WHERE name=${req.session.name} AND password=${req.session.password}";
+    con.query(sql, location, function(err, result) {
+        console.log('location added');
+        res.render("dashboard");
+    })
     
 });
 
