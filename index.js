@@ -82,33 +82,34 @@ app.post('/', function(req, res){
 });
 
 app.post('/login', function(req, res){
-    // res.send("Post Successful");
-    const request = require('request');
 
-    var name = req.body.name;
-    var password = req.body.password;
+    const name = req.body.name;
+    const password = req.body.password;
+    const idusers = " ";
 
     if (name && password) {
-        con.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password], function(error, results, fields) {
+        con.query('SELECT * FROM users WHERE name=? AND password=?',[name, password], function(error, results, fields) {
+            console.log(results);
             if (results.length > 0) {
                 req.session.loggedin = true;
                 req.session.name = name;
-                req.session.password = password;
+                req.session.id = idusers;
+                console.log(idusers);
+                return res.redirect('/dashboard');
 
-                req.session.save(function(err) {
-                res.redirect('/dashboard');
-                console.log("match");
-                  })
             } else {
                 res.send('Incorrect Username and/or Password!');
-        }	
-            res.end();
-    })}
+        }
+
+        })
+        }
+    
     else {
         res.send('Please enter Username and Password!');
         res.end();
     }
 })
+
 
 app.get('/login', function(req, res){
     res.render('login');
@@ -131,15 +132,18 @@ app.post('/register', function(req, res){
           if (err) throw err;
           console.log("1 record inserted");
         });
+        res.redirect("/login");
       });
-      res.redirect("/login");
+      
 
     
 })
 
 app.get('/dashboard', function(req, res){
-    const request = require('request');
+console.log("you've hit dashboard");
+
     if (req.session.loggedin){
+        res.render("dashboard");
         con.query('SELECT idusers FROM users WHERE name=${req.session.name} AND password=${req.session.password}', function(error, result, fields){
             req.session.id = result;
             console.log(req.session.id);
