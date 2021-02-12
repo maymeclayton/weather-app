@@ -19,7 +19,7 @@
           <div class="row">
             <div class="col"></div>
             <div class="col-6 text-center">
-              <input class="form-control" type="text" placeholder="Enter City..." id="city">
+              <input class="form-control" type="text" placeholder="Enter City..." name="city">
             </div>
             <div class="col"></div>
           </div>
@@ -34,7 +34,7 @@
     <div class="card w-75 text-center mx-auto m-3 mt-5">
         <h6 class="card-header">City</h6>
         <div class="card-body">
-        <h5 class="card-text" id="cityCard"></h5>
+        <h5 class="card-text" name="location"><%= location %></h5>
         </div>
     </div>
 
@@ -45,9 +45,9 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th scope="col" id="fahr"></th>
-                    <th scope="col" id="cel"></th>
-                    <th scope="col" id="kel"></th>
+                    <th scope="col" name="temp"><%= temp %></th>
+                    <th scope="col" name="desc"><%= desc%></th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
         </table>
