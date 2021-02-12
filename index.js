@@ -6,6 +6,7 @@ var mysql = require('mysql');
 require('dotenv').config();
 var session = require('express-session');
 var flash = require('connect-flash');
+var MemoryStore = require('memorystore')(session)
 
 var con = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -28,6 +29,9 @@ app.use(session({
 secret: "clayton!",
 resave: true,
 saveUninitialized: true,
+store: new MemoryStore({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
 cookie: { maxAge: 60000 }
 }));
 
