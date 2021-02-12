@@ -65,9 +65,9 @@ app.post('/', function(req, res){
               desc: null,
             })
           } else {
-            const location = body.name;
-            const temp = body.main.temp;
-            const desc = body.weather[0].description;
+            var location = body.name;
+            var temp = body.main.temp;
+            var desc = body.weather[0].description;
   
             res.render('index', {
               location, temp, desc
