@@ -119,6 +119,56 @@ app.get('/login', function(req, res){
     res.render('login');
 })
 
+app.get('/register2', function(req, res){
+  res.render('register2');
+})
+
+app.post('/register2', function(req, res){
+  const values = [
+    [req.body.name]
+]
+
+con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    var sql = "INSERT into username (username) VALUES ?";
+    con.query(sql, [values], function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted");
+    });
+    res.redirect("/login2");
+  });
+})
+
+app.get('/login2', function (req, res){
+  res.render('login2');
+})
+
+app.post('/login2', function (req, res){
+  const name = req.body.name;
+
+  if (name) {
+      con.query('SELECT * FROM username WHERE username=? ', name, function(error, results, fields) {
+          console.log(results);
+          if (results.length > 0) {
+              req.session.loggedin = true;
+              req.session.name = name;
+              console.log(name);
+              return res.redirect('/dashboard');
+
+          } else {
+              res.send('Incorrect Username.');
+      }
+
+      })
+      }
+  
+  else {
+      res.send('Please enter Username and Password!');
+      res.end();
+  }
+})
+
 app.get('/register', function(req, res){
     res.render('register');
 })
@@ -186,8 +236,6 @@ app.get('/dashboard', function(req, res){
     
     })
         
-
-
         con.query('SELECT idusers FROM users WHERE name=${req.session.name} AND password=${req.session.password}', function(error, result, fields){
             req.session.id = result;
             console.log(req.session.id);
@@ -202,12 +250,25 @@ app.get('/dashboard', function(req, res){
 });
 
 app.post("/dashboard", function(req, res){
+  console.log(req.session.name);
+    const values= [
+      [req.body.city,
+      req.body.name]
+      ]
+
     const location = req.body.city;
+
     var sql = "INSERT into locations ${location} WHERE name=${req.session.name} AND password=${req.session.password}";
-    con.query(sql, location, function(err, result) {
-        console.log('location added');
-        res.render("dashboard");
-    })
+    var sql2 = "INSERT into locations (location, username} VALUES ?";
+
+    con.query(sql2, [values], function(err, result) {
+      console.log('location added');
+      res.render("dashboard");
+  })
+    // con.query(sql, location, function(err, result) {
+    //     console.log('location added');
+    //     res.render("dashboard");
+    // })
     
 });
 
