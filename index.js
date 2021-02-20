@@ -87,18 +87,18 @@ app.post('/', function(req, res){
 
 app.post('/login', function(req, res){
 
-    const name = req.body.name;
-    const password = req.body.password;
-    const idusers = " ";
+    var user_name = req.body.name;
+    var pword = req.body.password;
+    var user_id = " ";
 
-    if (name && password) {
-        con.query('SELECT * FROM users WHERE name=? AND password=?',[name, password], function(error, results, fields) {
+    if (user_name && pword) {
+        con.query('SELECT * FROM users WHERE user_name=? AND pword=?',[user_name, pword], function(error, results, fields) {
             console.log(results);
             if (results.length > 0) {
                 req.session.loggedin = true;
-                req.session.name = name;
-                req.session.id = idusers;
-                console.log(idusers);
+                req.session.name = user_name;
+                req.session.id = user_id;
+                console.log(req.session.id);
                 return res.redirect('/dashboard');
 
             } else {
@@ -181,7 +181,7 @@ app.post('/register', function(req, res){
     con.connect(function(err) {
         if (err) throw err;
         console.log("Connected!");
-        var sql = "INSERT into users (name, password) VALUES ?";
+        var sql = "INSERT into users (user_name, pword) VALUES ?";
         con.query(sql, [values], function (err, result) {
           if (err) throw err;
           console.log("1 record inserted");
@@ -210,6 +210,7 @@ app.get('/dashboard', function(req, res){
 
     if (req.session.loggedin){
         res.render("dashboard");
+        
 
         // iterate through cities and display their weather.
         
@@ -253,15 +254,20 @@ app.post("/dashboard", function(req, res){
   console.log(req.session.name);
     const values= [
       [req.body.city,
-      req.body.name]
+        req.session.id
+      ]
       ]
 
     const location = req.body.city;
 
-    var sql = "INSERT into locations ${location} WHERE name=${req.session.name} AND password=${req.session.password}";
-    var sql2 = "INSERT into locations (location, username} VALUES ?";
+    // var sql = "INSERT into locations (location) WHERE idusers=${req.session.id}" VALUES (values);
 
-    con.query(sql2, [values], function(err, result) {
+    var sql = "INSERT INTO locations (location, user_id) VALUES ?";
+
+    // var sql = "INSERT INTO user.locations (location) VALUES (values) SELECT idusers FROM users WHERE idusers = ${req.session.id}";
+    // var sql2 = "INSERT into locations (location, username} VALUES ?";
+
+    con.query(sql, [values], function(err, result) {
       console.log('location added');
       res.render("dashboard");
   })
