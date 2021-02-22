@@ -197,6 +197,7 @@ app.get('/dashboard', function(req, res){
 
       var name = req.session.name;
       var pword = req.session.password;
+      var user_id = req.session.user_id;
         
         con.query('SELECT user_id FROM users WHERE user_name=? AND pword=?',[name, pword], function(error, result, fields){
           Object.keys(result).forEach(function(key) {
@@ -213,6 +214,11 @@ app.get('/dashboard', function(req, res){
         console.log("not logged in");
         res.redirect('/login');
     }
+
+    con.query('SELECT * FROM locations WHERE user_id=?;', user_id, function(error, result, fields){
+      
+      console.log(result);
+    });
     
 });
 
