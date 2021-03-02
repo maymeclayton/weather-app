@@ -16,11 +16,10 @@
         <h1>My Locations:</h1>
 
         <div class="row mt-5">
-            <div class="col">Lexington, KY</div>
-            <div class="col">Paris, FR</div>
-            <div class="col">San Francisco, CA</div>
-            <div class="col">Portland, ME</div>
-            <div class="col">Patchogue, NY</div>
+            <% for (var i = 0; i < results.length; i++) { %>
+            <div class="col"><%= results[i].location %></div>
+            <% } %>
+
         </div>
 
         <!-- save a location -->

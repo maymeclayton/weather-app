@@ -215,12 +215,13 @@ app.get('/dashboard', function(req, res){
         res.redirect('/login');
     }
 
-    con.query('SELECT * FROM locations WHERE user_id=?;', user_id, function(error, result, fields){
-      
-      console.log(result);
-    });
+    con.query('SELECT location FROM locations WHERE user_id=?;', user_id, function(error, results, fields){
+      const user_locations = JSON.stringify(results);
+      console.log(user_locations);
+    res.render('dashboard', [results]);
     
-});
+  });
+})
 
 app.post("/dashboard", function(req, res){
 
@@ -235,6 +236,7 @@ app.post("/dashboard", function(req, res){
     var sql = 'INSERT INTO locations (location, user_id) VALUES ?';
 
     con.query(sql, [values], function(err, result) {
+
       console.log(result);
       console.log('location added');
       res.render("dashboard");
