@@ -13,11 +13,14 @@
 
     </head>
     <body class="container">
+      
         <h1>My Locations:</h1>
 
         <div class="row mt-5">
-            <% for (var i = 0; i < results.length; i++) { %>
-            <div class="col"><%= results[i].location %></div>
+            <% for (var i = 0; i < user_locations.length; i++) { %>
+            <div class="col">
+              <p><%= user_locations[i] %></p>
+            </div>
             <% } %>
 
         </div>

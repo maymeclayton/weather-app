@@ -101,7 +101,7 @@ app.post('/login', function(req, res){
                 req.session.loggedin = true;
                 req.session.name = user_name;
                 req.session.password = pword;
-                
+
                 Object.keys(results).forEach(function(key) {
                   req.session.user_id = results[0].user_id;
                   console.log("is this anything?");
@@ -154,73 +154,83 @@ app.post('/register', function(req, res){
 app.get('/dashboard', function(req, res){
     const request = require('request');
 
-    var location =[
-        "Lexington",
-        "Paris",
-        "San Francisco",
-        "Patchogue"
-     ];
+    // var location =[
+    //     "Lexington",
+    //     "Paris",
+    //     "San Francisco",
+    //     "Patchogue"
+    //  ];
       
-
-    var key = process.env.API_KEY;
-    var baseUrl = "https://api.openweathermap.org/data/2.5/weather?q=";
-    var apiUrl = baseUrl + location + key;
-
     if (req.session.loggedin){
-        res.render("dashboard");
         
-
-        // iterate through cities and display their weather.
-        
-        request(apiUrl, { json: true }, function (error, response, body) {
-            if (body.message === 'city not found') {
-                res.render('index', {
-                  city: body.message,
-                  location: null,
-                  temp: null,
-                  desc: null,
-                })
-              } else {
-                var cities = body.name;
-                var temp = Math.round(Number((body.main.temp - 273.15) * (9 / 5) + 32)) + " F";
-                var desc = body.weather[0].description;
-      
-                res.render('index', {
-                  location, temp, desc
-                });
-              }
-    
-        console.error('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    
-    })
-
       var name = req.session.name;
       var pword = req.session.password;
       var user_id = req.session.user_id;
+      var user_locations;
+
         
         con.query('SELECT user_id FROM users WHERE user_name=? AND pword=?',[name, pword], function(error, result, fields){
           Object.keys(result).forEach(function(key) {
             var id = result[0].user_id;
             console.log("is this anything?");
-            console.log(id);
             console.log(req.session.user_id);
           });
     
         })
-        console.log('working');
+
+        con.query('SELECT location FROM locations WHERE user_id=?;', user_id, function(error, results, fields){
+          Object.keys(results).forEach(function(key) {
+            user_locations = JSON.stringify(results);
+            console.log("is this anything?");
+            console.log(req.session.user_id);
+            console.log("locations:");
+            console.log(user_locations);
+
+            
+          });
+          
+          res.render('dashboard', {user_locations});
+
+          
+        
+      });
+
+              // iterate through cities and display their weather.
+
+              // var key = process.env.API_KEY;
+              // var baseUrl = "https://api.openweathermap.org/data/2.5/weather?q=";
+              // var apiUrl = baseUrl + location + key;
+        
+    //     request(apiUrl, { json: true }, function (error, response, body) {
+    //         if (body.message === 'city not found') {
+    //             res.render('index', {
+    //               city: body.message,
+    //               location: null,
+    //               temp: null,
+    //               desc: null,
+    //             })
+    //           } else {
+    //             var cities = body.name;
+    //             var temp = Math.round(Number((body.main.temp - 273.15) * (9 / 5) + 32)) + " F";
+    //             var desc = body.weather[0].description;
+      
+    //             res.render('index', {
+    //               location, temp, desc
+    //             });
+    //           }
+    
+    //     console.error('error:', error); // Print the error if one occurred
+    //     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    
+    // })
+
     }
     else {
         console.log("not logged in");
         res.redirect('/login');
     }
 
-    con.query('SELECT location FROM locations WHERE user_id=?;', user_id, function(error, results, fields){
-      const user_locations = JSON.stringify(results);
-      console.log(user_locations);
-    res.render('dashboard', [results]);
-    
-  });
+
 })
 
 app.post("/dashboard", function(req, res){
